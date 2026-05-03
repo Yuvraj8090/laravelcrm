@@ -1,0 +1,12 @@
+{
+  "name": "Starter Theme",
+  "slug": "starter",
+  "version": "1.0.0",
+  "author": "Codex",
+  "description": "A simple starter theme for the multi-tenant CMS foundation.",
+  "view_namespace": "theme-starter",
+  "supports": {
+    "menus": true,
+    "customizer": true
+  }
+}

@@ -2,24 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Core\Website\Models\Website;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $website = Website::query()->updateOrCreate(
+            ['slug' => 'starter-site'],
+            [
+                'name' => 'Starter Site',
+                'status' => 'active',
+                'primary_domain' => 'starter.test',
+                'theme_slug' => config('cms.default_theme'),
+                'locale' => 'en',
+                'timezone' => 'UTC',
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $website->domains()->updateOrCreate(
+            ['domain' => 'starter.test'],
+            ['is_primary' => true]
+        );
     }
 }
