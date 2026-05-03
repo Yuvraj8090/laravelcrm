@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashi Associates | Real Estate Management System</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+    <div class="site-shell" id="siteShell">
+        <header class="topbar">
+            <a class="brand" href="#home">
+                <span class="brand-mark">YA</span>
+                <span>
+                    <strong>Yashi Associates</strong>
+                    <small>Real Estate Management System</small>
+                </span>
+            </a>
+
+            <nav class="topnav" id="topNav">
+                <a href="#home">Home</a>
+                <a href="#properties">Properties</a>
+                <a href="#services">Services</a>
+                <a href="#dashboard">Dashboard</a>
+            </nav>
+
+            <div class="topbar-actions">
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span id="themeLabel">Light</span>
+                </button>
+                <button class="ghost-button" id="loginTrigger" type="button">Admin Access</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero panel" id="home">
+                <div class="hero-copy">
+                    <p class="eyebrow">Premium Property Intelligence</p>
+                    <h1>Cinematic real estate operations for ambitious developers and owners.</h1>
+                    <p class="hero-text">
+                        Yashi Associates blends portfolio control, construction phase tracking, owner reporting,
+                        and issue resolution into one premium command center.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="primary-button" type="button" data-scroll="#dashboard">Explore Dashboard</button>
+                        <button class="secondary-button" type="button" data-scroll="#properties">View Portfolio</button>
+                    </div>
+
+                    <div class="metric-row" id="heroMetrics"></div>
+                </div>
+
+                <div class="hero-stage">
+                    <div class="stage-card stage-card-main">
+                        <span class="stage-glow"></span>
+                        <div class="stage-header">
+                            <span>Live Portfolio</span>
+                            <span id="liveStatus">Operational</span>
+                        </div>
+                        <div class="stage-value" id="stagePropertyCount">0</div>
+                        <p>Luxury residences, plotted developments, and high-velocity urban assets.</p>
+                    </div>
+                    <div class="stage-card stage-card-side">
+                        <h3>Build Phases</h3>
+                        <ul id="phaseHighlights"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="property-showcase panel" id="properties">
+                <div class="section-heading">
+                    <p class="eyebrow">Portfolio Showcase</p>
+                    <h2>Properties presented with premium detail and live status tracking.</h2>
+                </div>
+                <div class="property-grid" id="publicPropertyGrid"></div>
+            </section>
+
+            <section class="services panel" id="services">
+                <div class="section-heading">
+                    <p class="eyebrow">What We Manage</p>
+                    <h2>Owners, teams, projects, sales progress, and resolution workflows in one immersive system.</h2>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <h3>Owner Portal</h3>
+                        <p>Private progress views, issue escalation, milestone visibility, and asset summaries.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Phase Management</h3>
+                        <p>Track planning, construction, completion, and sold phases with real operational clarity.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Problem Resolution</h3>
+                        <p>Structured tickets keep owners and internal teams aligned from report to closure.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Analytics</h3>
+                        <p>Visibility into team workloads, project readiness, issue aging, and sales outcomes.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="dashboard-preview panel" id="dashboard">
+                <div class="section-heading">
+                    <p class="eyebrow">Command Center</p>
+                    <h2>A complete offline-capable management system with role-based access and persistent data.</h2>
+                </div>
+
+                <div class="dashboard-shell hidden" id="dashboardShell">
+                    <aside class="dashboard-sidebar">
+                        <div class="dashboard-profile">
+                            <strong id="currentUserName">Guest</strong>
+                            <span id="currentUserMeta">Sign in to manage the system</span>
+                        </div>
+                        <div class="dashboard-nav" id="dashboardNav"></div>
+                        <button class="secondary-button full-width" id="logoutButton" type="button">Log Out</button>
+                    </aside>
+
+                    <section class="dashboard-main">
+                        <div class="dashboard-toolbar">
+                            <div>
+                                <h3 id="panelTitle">Overview</h3>
+                                <p id="panelSubtitle">A quick summary of portfolio performance and live operations.</p>
+                            </div>
+                            <div class="toolbar-actions" id="panelActions"></div>
+                        </div>
+
+                        <div class="panel-content" id="panelContent"></div>
+                    </section>
+                </div>
+
+                <div class="guest-dashboard card-grid" id="guestDashboard">
+                    <article class="guest-card">
+                        <h3>Admin Dashboard</h3>
+                        <p>Portfolio statistics, analytics, CRUD management, and team operations.</p>
+                    </article>
+                    <article class="guest-card">
+                        <h3>Owner Portal</h3>
+                        <p>Property progress monitoring, issue visibility, and status reporting.</p>
+                    </article>
+                    <article class="guest-card">
+                        <h3>Team Workspace</h3>
+                        <p>Task ownership, phase updates, and problem resolution workflows.</p>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="authModal">
+        <div class="modal auth-card">
+            <button class="modal-close" id="closeAuthModal" type="button" aria-label="Close">×</button>
+            <p class="eyebrow">Secure Access</p>
+            <h2>Sign in to Yashi Associates</h2>
+            <p class="modal-copy">Sample accounts are preloaded for admin, owner, and team access.</p>
+
+            <form id="loginForm" class="stack-form">
+                <label>
+                    <span>Email</span>
+                    <input type="email" name="email" placeholder="admin@yashi.local" required>
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" name="password" placeholder="password123" required>
+                </label>
+                <button class="primary-button full-width" type="submit">Log In</button>
+            </form>
+
+            <div class="sample-logins">
+                <strong>Sample Accounts</strong>
+                <ul>
+                    <li>Admin: `admin@yashi.local` / `password123`</li>
+                    <li>Owner: `owner@yashi.local` / `password123`</li>
+                    <li>Team: `team@yashi.local` / `password123`</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop hidden" id="recordModal">
+        <div class="modal form-modal">
+            <button class="modal-close" id="closeRecordModal" type="button" aria-label="Close">×</button>
+            <div class="modal-header">
+                <p class="eyebrow">Manage Record</p>
+                <h2 id="recordModalTitle">Add Record</h2>
+            </div>
+            <form id="recordForm" class="stack-form"></form>
+        </div>
+    </div>
+
+    <template id="statCardTemplate">
+        <article class="stat-card">
+            <span class="stat-label"></span>
+            <strong class="stat-value"></strong>
+            <small class="stat-note"></small>
+        </article>
+    </template>
+
+    <script src="./assets/app.js"></script>
+</body>
+</html>
