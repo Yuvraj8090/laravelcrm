@@ -6,6 +6,7 @@ use App\Core\Support\Hooks\HookManager;
 use App\Core\Tenancy\Context\WebsiteContext;
 use App\Plugins\Registries\PluginRegistry;
 use App\Plugins\Services\PluginManager;
+use App\Support\Services\ActivityLogger;
 use App\Themes\Registries\ThemeRegistry;
 use App\Themes\Services\ThemeManager;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +33,9 @@ class CmsServiceProvider extends ServiceProvider
                 $app->make(WebsiteContext::class),
             );
         });
+        $this->app->singleton(ActivityLogger::class, fn ($app) => new ActivityLogger(
+            $app->make(WebsiteContext::class)
+        ));
     }
 
     public function boot(): void

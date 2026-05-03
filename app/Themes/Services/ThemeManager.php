@@ -22,7 +22,8 @@ class ThemeManager
     {
         $this->context->set($website);
 
-        $theme = $this->themes->find($website->theme_slug ?: config('cms.default_theme'));
+        $theme = $this->themes->find($website->theme_slug ?: config('cms.default_theme'))
+            ?? $this->themes->find(config('cms.default_theme'));
 
         if (!$theme) {
             return null;
@@ -49,6 +50,19 @@ class ThemeManager
     public function active(): ?array
     {
         return $this->activeTheme;
+    }
+
+    public function themeSettings(Website $website, string $slug): array
+    {
+        return cache()->remember(
+            "theme-settings:{$website->id}:{$slug}",
+            now()->addMinutes(30),
+            fn () => $website->siteSettings()
+                ->where('group_name', "theme:{$slug}")
+                ->pluck('value', 'key_name')
+                ->map(fn ($value) => is_array($value) && array_key_exists('value', $value) ? $value['value'] : $value)
+                ->toArray()
+        );
     }
 
     public function view(string $template, array $data = []): ViewContract

@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Core\Website\Models\Role;
+use App\Core\Website\Models\Website;
+use App\Core\Website\Models\WebsiteUser;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -20,8 +27,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'api_token',
     ];
 
     /**
@@ -32,6 +41,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'api_token',
     ];
 
     /**
@@ -45,5 +55,44 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function websiteMemberships(): HasMany
+    {
+        return $this->hasMany(WebsiteUser::class);
+    }
+
+    public function websites(): BelongsToMany
+    {
+        return $this->belongsToMany(Website::class, 'website_users')
+            ->withPivot('role_id')
+            ->withTimestamps();
+    }
+
+    public function roles(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Role::class,
+            WebsiteUser::class,
+            'user_id',
+            'id',
+            'id',
+            'role_id',
+        );
+    }
+
+    public function hasRole(string|array $roles, ?Website $website = null): bool
+    {
+        $roles = array_map('strtolower', (array) $roles);
+
+        $query = $this->websiteMemberships()->with('role');
+
+        if ($website) {
+            $query->where('website_id', $website->getKey());
+        }
+
+        return $query->get()->contains(function (WebsiteUser $membership) use ($roles) {
+            return $membership->role && in_array(Str::lower($membership->role->slug), $roles, true);
+        });
     }
 }

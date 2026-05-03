@@ -116,12 +116,21 @@ return new class extends Migration
             $table->string('type', 60)->index();
             $table->string('status', 30)->index()->default('draft');
             $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('contents')->nullOnDelete();
+            $table->unsignedBigInteger('featured_media_id')->nullable();
             $table->string('slug', 190);
             $table->string('title');
             $table->text('excerpt')->nullable();
             $table->longText('body')->nullable();
+            $table->json('builder_data')->nullable();
+            $table->string('template')->nullable();
+            $table->integer('sort_order')->default(0);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->string('og_title')->nullable();
+            $table->text('og_description')->nullable();
+            $table->string('og_image')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -172,10 +181,71 @@ return new class extends Migration
             $table->timestamps();
             $table->index(['website_id', 'mime_type', 'created_at']);
         });
+
+        Schema::create('menus', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('website_id')->constrained()->cascadeOnDelete();
+            $table->string('name', 120);
+            $table->string('location', 120)->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('menu_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('menu_items')->nullOnDelete();
+            $table->string('title', 150);
+            $table->string('url')->nullable();
+            $table->string('target', 20)->nullable();
+            $table->integer('sort_order')->default(0);
+            $table->string('reference_type', 60)->nullable();
+            $table->unsignedBigInteger('reference_id')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('widgets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('website_id')->constrained()->cascadeOnDelete();
+            $table->string('name', 150);
+            $table->string('area', 80)->default('sidebar');
+            $table->string('type', 80);
+            $table->json('settings')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+
+        Schema::create('page_sections', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('website_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('content_id')->nullable()->constrained('contents')->cascadeOnDelete();
+            $table->string('name', 150)->nullable();
+            $table->string('type', 80);
+            $table->integer('sort_order')->default(0);
+            $table->json('settings')->nullable();
+            $table->boolean('is_reusable')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('activity_logs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('website_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('action', 120);
+            $table->string('subject_type', 120)->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
+            $table->json('properties')->nullable();
+            $table->timestamps();
+            $table->index(['website_id', 'action', 'created_at']);
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('activity_logs');
+        Schema::dropIfExists('page_sections');
+        Schema::dropIfExists('widgets');
+        Schema::dropIfExists('menu_items');
+        Schema::dropIfExists('menus');
         Schema::dropIfExists('media');
         Schema::dropIfExists('content_taxonomy');
         Schema::dropIfExists('taxonomies');
