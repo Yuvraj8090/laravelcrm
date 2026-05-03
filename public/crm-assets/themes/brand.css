@@ -1,0 +1,10 @@
+body {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface-alt: #f9fbff;
+    --text: #17212b;
+    --muted: #5d6b79;
+    --line: #d7dfeb;
+    --primary: var(--brand-primary, #7c3aed);
+    --secondary: var(--brand-secondary, #ec4899);
+}

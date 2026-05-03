@@ -10,6 +10,18 @@ use App\Http\Controllers\Admin\TaxonomyController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\Admin\WidgetController;
+use App\Http\Controllers\Crm\AuthController as CrmAuthController;
+use App\Http\Controllers\Crm\CommunicationController;
+use App\Http\Controllers\Crm\CompanyController;
+use App\Http\Controllers\Crm\ContactController;
+use App\Http\Controllers\Crm\DashboardController as CrmDashboardController;
+use App\Http\Controllers\Crm\DealController;
+use App\Http\Controllers\Crm\InvoiceController;
+use App\Http\Controllers\Crm\LeadController;
+use App\Http\Controllers\Crm\PipelineController;
+use App\Http\Controllers\Crm\QuoteController;
+use App\Http\Controllers\Crm\SettingsController;
+use App\Http\Controllers\Crm\TaskController;
 use App\Http\Controllers\Auth\SessionController;
 use App\Core\Website\Models\Website;
 use App\Themes\Services\ThemeManager;
@@ -89,3 +101,63 @@ Route::prefix('admin')
         Route::put('widgets/{widget}', [WidgetController::class, 'update'])->name('widgets.update');
         Route::delete('widgets/{widget}', [WidgetController::class, 'destroy'])->name('widgets.destroy');
     });
+
+Route::prefix('crm')->name('crm.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [CrmAuthController::class, 'create'])->name('login');
+        Route::post('/login', [CrmAuthController::class, 'store'])->name('login.store');
+    });
+
+    Route::middleware(['auth', 'crm.role:admin,manager,sales_rep'])->group(function () {
+        Route::post('/logout', [CrmAuthController::class, 'destroy'])->name('logout');
+        Route::get('/dashboard', CrmDashboardController::class)->name('dashboard');
+
+        Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+        Route::post('/companies', [CompanyController::class, 'store'])->middleware('crm.role:admin,manager')->name('companies.store');
+        Route::put('/companies/{company}', [CompanyController::class, 'update'])->middleware('crm.role:admin,manager')->name('companies.update');
+        Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->middleware('crm.role:admin')->name('companies.destroy');
+
+        Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+        Route::post('/contacts', [ContactController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('contacts.store');
+        Route::put('/contacts/{contact}', [ContactController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('contacts.update');
+        Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('contacts.destroy');
+
+        Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+        Route::post('/leads', [LeadController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('leads.store');
+        Route::put('/leads/{lead}', [LeadController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('leads.update');
+        Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('leads.destroy');
+
+        Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
+        Route::post('/deals', [DealController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('deals.store');
+        Route::put('/deals/{deal}', [DealController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('deals.update');
+        Route::delete('/deals/{deal}', [DealController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('deals.destroy');
+
+        Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+        Route::post('/tasks', [TaskController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('tasks.store');
+        Route::put('/tasks/{task}', [TaskController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('tasks.update');
+        Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('tasks.destroy');
+
+        Route::get('/communications', [CommunicationController::class, 'index'])->name('communications.index');
+        Route::post('/communications', [CommunicationController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('communications.store');
+        Route::put('/communications/{communication}', [CommunicationController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('communications.update');
+        Route::delete('/communications/{communication}', [CommunicationController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('communications.destroy');
+
+        Route::get('/pipelines', [PipelineController::class, 'index'])->middleware('crm.role:admin,manager')->name('pipelines.index');
+        Route::post('/pipelines', [PipelineController::class, 'store'])->middleware('crm.role:admin,manager')->name('pipelines.store');
+        Route::put('/pipelines/{pipeline}', [PipelineController::class, 'update'])->middleware('crm.role:admin,manager')->name('pipelines.update');
+        Route::delete('/pipelines/{pipeline}', [PipelineController::class, 'destroy'])->middleware('crm.role:admin')->name('pipelines.destroy');
+
+        Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index');
+        Route::post('/quotes', [QuoteController::class, 'store'])->middleware('crm.role:admin,manager,sales_rep')->name('quotes.store');
+        Route::put('/quotes/{quote}', [QuoteController::class, 'update'])->middleware('crm.role:admin,manager,sales_rep')->name('quotes.update');
+        Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])->middleware('crm.role:admin,manager')->name('quotes.destroy');
+
+        Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::post('/invoices', [InvoiceController::class, 'store'])->middleware('crm.role:admin,manager')->name('invoices.store');
+        Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->middleware('crm.role:admin,manager')->name('invoices.update');
+        Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->middleware('crm.role:admin')->name('invoices.destroy');
+
+        Route::get('/settings/theme', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings/theme', [SettingsController::class, 'update'])->name('settings.update');
+    });
+});

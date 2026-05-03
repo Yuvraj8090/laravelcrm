@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ContentSeeder::class,
             ConfigurationSeeder::class,
             NavigationSeeder::class,
+            CrmDemoSeeder::class,
         ]);
     }
 }

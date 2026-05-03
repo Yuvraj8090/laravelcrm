@@ -31,6 +31,9 @@ class User extends Authenticatable
         'email',
         'password',
         'api_token',
+        'crm_role',
+        'crm_theme',
+        'crm_theme_settings',
     ];
 
     /**
@@ -54,6 +57,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'crm_theme_settings' => 'array',
         ];
     }
 
@@ -94,5 +98,10 @@ class User extends Authenticatable
         return $query->get()->contains(function (WebsiteUser $membership) use ($roles) {
             return $membership->role && in_array(Str::lower($membership->role->slug), $roles, true);
         });
+    }
+
+    public function hasCrmRole(string|array $roles): bool
+    {
+        return in_array($this->crm_role, (array) $roles, true);
     }
 }

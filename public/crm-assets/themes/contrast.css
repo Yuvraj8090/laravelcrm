@@ -1,0 +1,12 @@
+body {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f6f600;
+    --text: #000000;
+    --muted: #141414;
+    --line: #000000;
+    --primary: #0037ff;
+    --secondary: #000000;
+    --shadow: none;
+    --font-size: 17px;
+}

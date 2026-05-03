@@ -1,0 +1,11 @@
+body {
+    --bg: #0d141b;
+    --surface: #121d27;
+    --surface-alt: #162432;
+    --text: #edf4fb;
+    --muted: #9db0c0;
+    --line: #23384a;
+    --primary: #5cc6ff;
+    --secondary: #8fa1b2;
+    --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
